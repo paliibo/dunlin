@@ -160,7 +160,7 @@ one cost, in [`docs/decisions.md`](docs/decisions.md).
 | Runtime   | Node 24, TypeScript strict, ESM                                                                      |
 | Framework | NestJS 12 — guards, interceptors, `@nestjs/swagger`, `@nestjs/terminus`                              |
 | Database  | PostgreSQL 16, TypeORM 1 with hand-written SQL migrations, row-level security                        |
-| Jobs      | BullMQ 6 on Redis 7 — five queues, retries with backoff, cron via job schedulers                     |
+| Jobs      | BullMQ 6 on Redis 7 — six queues, retries with backoff, cron via job schedulers                     |
 | Documents | pdfkit                                                                                               |
 | Mail      | nodemailer — SMTP in compose (Mailpit), JSON transport in tests                                      |
 | Tests     | Jest 30 (ESM) — unit tests on the pure modules, Supertest end-to-end against real Postgres and Redis |
