@@ -1,0 +1,73 @@
+# The whole system: Postgres (as a non-superuser, so row-level security holds),
+# Redis for BullMQ, Mailpit to catch outgoing mail, and the application twice —
+# once serving HTTP, once working queues. `docker compose up --build` and
+# http://localhost:3000/docs is live; mail lands at http://localhost:8025.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5433:5432'
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6380:6379'
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - '8025:8025'
+      - '1025:1025'
+
+  api:
+    build: .
+    profiles: [app]
+    environment: &app-env
+      DATABASE_URL: postgres://dunlin:dunlin@postgres:5432/dunlin
+      REDIS_URL: redis://redis:6379
+      SMTP_URL: smtp://mailpit:1025
+      PUBLIC_BASE_URL: http://localhost:3000
+      PLATFORM_TOKEN: ${PLATFORM_TOKEN:-compose-only-platform-token-change-me}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    build: .
+    profiles: [app]
+    environment:
+      <<: *app-env
+      DUNLIN_ROLE: worker
+      # The API applies migrations on boot; the worker waits for it rather than racing it.
+      DB_MIGRATE_ON_BOOT: '0'
+    healthcheck:
+      disable: true
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres-data:

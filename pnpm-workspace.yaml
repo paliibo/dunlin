@@ -1,0 +1,6 @@
+# Native or postinstall-dependent packages that must be allowed to build.
+allowBuilds:
+  '@parcel/watcher': true
+  msgpackr-extract: true
+  unrs-resolver: true
+  '@scarf/scarf': false

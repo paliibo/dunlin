@@ -1,0 +1,2742 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/health": {
+      "get": {
+        "operationId": "check",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The Health Check is successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok",
+                        "degraded"
+                      ],
+                      "example": "ok"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up",
+                          "responseTime": 12
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "up",
+                              "degraded",
+                              "down"
+                            ]
+                          },
+                          "responseTime": {
+                            "type": "number",
+                            "description": "Time the health indicator took to respond, in ms"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {},
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "up",
+                              "degraded",
+                              "down"
+                            ]
+                          },
+                          "responseTime": {
+                            "type": "number",
+                            "description": "Time the health indicator took to respond, in ms"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up",
+                          "responseTime": 12
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "up",
+                              "degraded",
+                              "down"
+                            ]
+                          },
+                          "responseTime": {
+                            "type": "number",
+                            "description": "Time the health indicator took to respond, in ms"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The Health Check is not successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "error",
+                        "shutting_down"
+                      ],
+                      "example": "error"
+                    },
+                    "info": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up",
+                          "responseTime": 12
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "up",
+                              "degraded",
+                              "down"
+                            ]
+                          },
+                          "responseTime": {
+                            "type": "number",
+                            "description": "Time the health indicator took to respond, in ms"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "error": {
+                      "type": "object",
+                      "example": {
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect",
+                          "responseTime": 3005
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "up",
+                              "degraded",
+                              "down"
+                            ]
+                          },
+                          "responseTime": {
+                            "type": "number",
+                            "description": "Time the health indicator took to respond, in ms"
+                          }
+                        },
+                        "additionalProperties": true
+                      },
+                      "nullable": true
+                    },
+                    "details": {
+                      "type": "object",
+                      "example": {
+                        "database": {
+                          "status": "up",
+                          "responseTime": 12
+                        },
+                        "redis": {
+                          "status": "down",
+                          "message": "Could not connect",
+                          "responseTime": 3005
+                        }
+                      },
+                      "additionalProperties": {
+                        "type": "object",
+                        "required": [
+                          "status"
+                        ],
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "up",
+                              "degraded",
+                              "down"
+                            ]
+                          },
+                          "responseTime": {
+                            "type": "number",
+                            "description": "Time the health indicator took to respond, in ms"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Liveness, with database and Redis checks",
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/v1/tenants": {
+      "post": {
+        "operationId": "create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTenantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedTenantResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "platform": []
+          }
+        ],
+        "summary": "Create a tenant and its owner API key",
+        "tags": [
+          "Platform"
+        ]
+      }
+    },
+    "/v1/tenants/{id}/api-keys": {
+      "post": {
+        "operationId": "issueKey",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IssueApiKeyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IssuedApiKeyResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "platform": []
+          }
+        ],
+        "summary": "Issue an additional API key for a tenant",
+        "tags": [
+          "Platform"
+        ]
+      }
+    },
+    "/v1/tenant": {
+      "get": {
+        "operationId": "me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "The tenant the API key belongs to",
+        "tags": [
+          "Tenant"
+        ]
+      },
+      "patch": {
+        "operationId": "update",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTenantDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TenantResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Update settings, including the dunning policy",
+        "tags": [
+          "Tenant"
+        ]
+      }
+    },
+    "/v1/tenant/api-keys": {
+      "get": {
+        "operationId": "listKeys",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApiKeyResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "List API keys (prefixes only)",
+        "tags": [
+          "Tenant"
+        ]
+      }
+    },
+    "/v1/tenant/api-keys/{id}": {
+      "delete": {
+        "operationId": "revoke",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Revoke an API key",
+        "tags": [
+          "Tenant"
+        ]
+      }
+    },
+    "/v1/customers": {
+      "post": {
+        "operationId": "create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Create a customer",
+        "tags": [
+          "Customers"
+        ]
+      },
+      "get": {
+        "operationId": "list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Opaque cursor from a previous page",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerPage"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "List customers, newest first",
+        "tags": [
+          "Customers"
+        ]
+      }
+    },
+    "/v1/customers/{id}": {
+      "get": {
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Get a customer",
+        "tags": [
+          "Customers"
+        ]
+      },
+      "patch": {
+        "operationId": "update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Update a customer",
+        "tags": [
+          "Customers"
+        ]
+      },
+      "delete": {
+        "operationId": "remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Delete a customer that has no invoices",
+        "tags": [
+          "Customers"
+        ]
+      }
+    },
+    "/v1/invoices": {
+      "post": {
+        "operationId": "create",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Any unique string; a repeat with the same key returns the first response instead of acting twice",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Create a draft invoice",
+        "tags": [
+          "Invoices"
+        ]
+      },
+      "get": {
+        "operationId": "list",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "description": "Opaque cursor from a previous page",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "draft",
+                "issued",
+                "partially_paid",
+                "paid",
+                "void"
+              ]
+            }
+          },
+          {
+            "name": "customerId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "overdue",
+            "required": false,
+            "in": "query",
+            "description": "Only open invoices past their due date",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoicePage"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "List invoices, newest first",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/v1/invoices/{id}": {
+      "get": {
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Get an invoice with its lines and dunning state",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/v1/invoices/{id}/issue": {
+      "post": {
+        "operationId": "issue",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Any unique string; a repeat with the same key returns the first response instead of acting twice",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IssueInvoiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Issue a draft: assign the next number, set the due date, send it",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/v1/invoices/{id}/void": {
+      "post": {
+        "operationId": "void",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VoidInvoiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Void an unpaid invoice",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/v1/invoices/{id}/pdf": {
+      "get": {
+        "operationId": "pdf",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "The invoice as a PDF; rendered on first request if the worker has not yet",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/v1/invoices/{invoiceId}/payments": {
+      "post": {
+        "operationId": "record",
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordPaymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Record a payment against an invoice",
+        "tags": [
+          "Payments"
+        ]
+      },
+      "get": {
+        "operationId": "list",
+        "parameters": [
+          {
+            "name": "invoiceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PaymentResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Payments recorded against an invoice, oldest first",
+        "tags": [
+          "Payments"
+        ]
+      }
+    },
+    "/v1/bank-imports": {
+      "post": {
+        "operationId": "create",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBankImportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankImportResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Submit statement lines for reconciliation; matching runs in the background",
+        "tags": [
+          "Bank imports"
+        ]
+      }
+    },
+    "/v1/bank-imports/{id}": {
+      "get": {
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BankImportResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "An import with every line and its outcome",
+        "tags": [
+          "Bank imports"
+        ]
+      }
+    },
+    "/v1/dunning/runs": {
+      "post": {
+        "operationId": "run",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunDunningDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DunningRunResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Run the dunning scan now (the worker runs it daily)",
+        "tags": [
+          "Dunning"
+        ]
+      }
+    },
+    "/v1/invoices/{id}/dunning": {
+      "get": {
+        "operationId": "notices",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DunningNoticeResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Notices sent for an invoice",
+        "tags": [
+          "Dunning"
+        ]
+      }
+    },
+    "/v1/invoices/{id}/dunning/pause": {
+      "post": {
+        "operationId": "pause",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Stop reminders for an invoice, e.g. while a dispute is open",
+        "tags": [
+          "Dunning"
+        ]
+      }
+    },
+    "/v1/invoices/{id}/dunning/resume": {
+      "post": {
+        "operationId": "resume",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Resume reminders for an invoice",
+        "tags": [
+          "Dunning"
+        ]
+      }
+    },
+    "/v1/dunning/notices/{id}/pdf": {
+      "get": {
+        "operationId": "pdf",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "The reminder letter as a PDF",
+        "tags": [
+          "Dunning"
+        ]
+      }
+    },
+    "/v1/mail/outbox": {
+      "get": {
+        "operationId": "list",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "enum": [
+                "queued",
+                "sent",
+                "failed"
+              ],
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OutboxMessageResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "The last hundred messages, newest first",
+        "tags": [
+          "Mail"
+        ]
+      }
+    },
+    "/v1/webhooks": {
+      "post": {
+        "operationId": "create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWebhookEndpointDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedWebhookEndpointResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Register an endpoint; the signing secret is returned once",
+        "tags": [
+          "Webhooks"
+        ]
+      },
+      "get": {
+        "operationId": "list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WebhookEndpointResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "List endpoints",
+        "tags": [
+          "Webhooks"
+        ]
+      }
+    },
+    "/v1/webhooks/{id}": {
+      "delete": {
+        "operationId": "remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "Remove an endpoint and its delivery history",
+        "tags": [
+          "Webhooks"
+        ]
+      }
+    },
+    "/v1/webhooks/{id}/deliveries": {
+      "get": {
+        "operationId": "deliveries",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WebhookDeliveryResponse"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api-key": []
+          }
+        ],
+        "summary": "The last hundred deliveries to an endpoint, newest first",
+        "tags": [
+          "Webhooks"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Dunlin",
+    "description": "Multi-tenant invoicing, dunning and payment reconciliation. Authenticate with a tenant API key as a Bearer token; tenant creation uses the platform token.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "api-key": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "description": "Tenant API key"
+      },
+      "platform": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Platform-Token"
+      }
+    },
+    "schemas": {
+      "CreateTenantDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Acme Treuhand AG"
+          },
+          "country": {
+            "type": "string",
+            "example": "CH",
+            "description": "ISO 3166-1 alpha-2"
+          },
+          "currency": {
+            "type": "string",
+            "example": "CHF",
+            "description": "ISO 4217; every invoice of the tenant uses it"
+          },
+          "invoicePrefix": {
+            "type": "string",
+            "example": "INV",
+            "default": "INV"
+          },
+          "paymentTermsDays": {
+            "type": "number",
+            "example": 30,
+            "default": 14,
+            "minimum": 0,
+            "maximum": 365
+          },
+          "dunningPolicy": {
+            "type": "object",
+            "description": "Escalation schedule; see the Dunning section. Defaults to reminder at 3 days, second reminder with a 15.00 fee at 14, final notice with a 40.00 fee at 30, 5 % annual interest.",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "name",
+          "country",
+          "currency"
+        ]
+      },
+      "TenantResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "invoicePrefix": {
+            "type": "string"
+          },
+          "paymentTermsDays": {
+            "type": "number"
+          },
+          "dunningPolicy": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "country",
+          "currency",
+          "invoicePrefix",
+          "paymentTermsDays",
+          "dunningPolicy",
+          "createdAt"
+        ]
+      },
+      "IssuedApiKeyResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "accountant",
+              "viewer"
+            ]
+          },
+          "keyPrefix": {
+            "type": "string",
+            "description": "The first characters of the key, for identification"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "lastUsedAt": {
+            "type": "object",
+            "nullable": true
+          },
+          "revokedAt": {
+            "type": "object",
+            "nullable": true
+          },
+          "key": {
+            "type": "string",
+            "description": "The full key. Shown once; it is not stored."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "role",
+          "keyPrefix",
+          "createdAt",
+          "lastUsedAt",
+          "revokedAt",
+          "key"
+        ]
+      },
+      "CreatedTenantResponse": {
+        "type": "object",
+        "properties": {
+          "tenant": {
+            "$ref": "#/components/schemas/TenantResponse"
+          },
+          "apiKey": {
+            "$ref": "#/components/schemas/IssuedApiKeyResponse"
+          }
+        },
+        "required": [
+          "tenant",
+          "apiKey"
+        ]
+      },
+      "IssueApiKeyDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Accounting integration"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "accountant",
+              "viewer"
+            ],
+            "example": "accountant"
+          }
+        },
+        "required": [
+          "name",
+          "role"
+        ]
+      },
+      "UpdateTenantDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Acme Treuhand AG"
+          },
+          "invoicePrefix": {
+            "type": "string",
+            "example": "INV"
+          },
+          "paymentTermsDays": {
+            "type": "number",
+            "example": 30,
+            "minimum": 0,
+            "maximum": 365
+          },
+          "dunningPolicy": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "ApiKeyResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "owner",
+              "accountant",
+              "viewer"
+            ]
+          },
+          "keyPrefix": {
+            "type": "string",
+            "description": "The first characters of the key, for identification"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "lastUsedAt": {
+            "type": "object",
+            "nullable": true
+          },
+          "revokedAt": {
+            "type": "object",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "role",
+          "keyPrefix",
+          "createdAt",
+          "lastUsedAt",
+          "revokedAt"
+        ]
+      },
+      "AddressDto": {
+        "type": "object",
+        "properties": {
+          "line1": {
+            "type": "string",
+            "example": "Bahnhofstrasse 1"
+          },
+          "line2": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string",
+            "example": "8001"
+          },
+          "city": {
+            "type": "string",
+            "example": "Zürich"
+          },
+          "country": {
+            "type": "string",
+            "example": "CH"
+          }
+        },
+        "required": [
+          "line1",
+          "postalCode",
+          "city",
+          "country"
+        ]
+      },
+      "CreateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Muster GmbH"
+          },
+          "email": {
+            "type": "string",
+            "example": "ap@muster.example"
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressDto"
+          },
+          "vatId": {
+            "type": "string",
+            "example": "CHE-123.456.789"
+          },
+          "paymentTermsDays": {
+            "type": "number",
+            "description": "Overrides the tenant default",
+            "minimum": 0,
+            "maximum": 365
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CustomerResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "object",
+            "nullable": true
+          },
+          "address": {
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AddressDto"
+              }
+            ]
+          },
+          "vatId": {
+            "type": "object",
+            "nullable": true
+          },
+          "paymentTermsDays": {
+            "type": "object",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "address",
+          "vatId",
+          "paymentTermsDays",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "CustomerPage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CustomerResponse"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true,
+            "description": "Pass as ?cursor= for the next page; null on the last page"
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "UpdateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressDto"
+          },
+          "vatId": {
+            "type": "string"
+          },
+          "paymentTermsDays": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 365
+          }
+        }
+      },
+      "InvoiceLineDto": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "example": "Consulting, September"
+          },
+          "quantity": {
+            "type": "number",
+            "example": 12.5,
+            "description": "Up to three decimals"
+          },
+          "unitPriceMinor": {
+            "type": "number",
+            "example": 18000,
+            "description": "Minor units (cents, rappen)"
+          },
+          "taxRateBps": {
+            "type": "number",
+            "example": 810,
+            "description": "Basis points: 810 is 8.1 %"
+          }
+        },
+        "required": [
+          "description",
+          "quantity",
+          "unitPriceMinor",
+          "taxRateBps"
+        ]
+      },
+      "CreateInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceLineDto"
+            }
+          },
+          "notes": {
+            "type": "string",
+            "example": "Payable within 30 days."
+          }
+        },
+        "required": [
+          "customerId",
+          "lines"
+        ]
+      },
+      "InvoiceLineResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "position": {
+            "type": "number"
+          },
+          "description": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unitPriceMinor": {
+            "type": "number"
+          },
+          "taxRateBps": {
+            "type": "number"
+          },
+          "netMinor": {
+            "type": "number"
+          },
+          "taxMinor": {
+            "type": "number"
+          },
+          "totalMinor": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "position",
+          "description",
+          "quantity",
+          "unitPriceMinor",
+          "taxRateBps",
+          "netMinor",
+          "taxMinor",
+          "totalMinor"
+        ]
+      },
+      "DunningSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "number",
+            "description": "Highest level reached; 0 before the first reminder"
+          },
+          "paused": {
+            "type": "boolean"
+          },
+          "lastNoticeOn": {
+            "type": "object",
+            "nullable": true
+          },
+          "feesMinor": {
+            "type": "number",
+            "description": "Reminder fees charged so far"
+          },
+          "interestMinor": {
+            "type": "number",
+            "description": "Interest stated on the latest notice"
+          },
+          "collectibleMinor": {
+            "type": "number",
+            "description": "Open balance plus fees and interest"
+          }
+        },
+        "required": [
+          "level",
+          "paused",
+          "lastNoticeOn",
+          "feesMinor",
+          "interestMinor",
+          "collectibleMinor"
+        ]
+      },
+      "InvoiceResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "number": {
+            "type": "object",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "issued",
+              "partially_paid",
+              "paid",
+              "void"
+            ]
+          },
+          "customerId": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "issuedOn": {
+            "type": "object",
+            "nullable": true
+          },
+          "dueOn": {
+            "type": "object",
+            "nullable": true
+          },
+          "subtotalMinor": {
+            "type": "number"
+          },
+          "taxMinor": {
+            "type": "number"
+          },
+          "totalMinor": {
+            "type": "number"
+          },
+          "paidMinor": {
+            "type": "number"
+          },
+          "balanceMinor": {
+            "type": "number"
+          },
+          "overdue": {
+            "type": "boolean",
+            "description": "Open and past due, as of today"
+          },
+          "notes": {
+            "type": "object",
+            "nullable": true
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceLineResponse"
+            }
+          },
+          "dunning": {
+            "$ref": "#/components/schemas/DunningSummaryResponse"
+          },
+          "voidedAt": {
+            "type": "object",
+            "nullable": true
+          },
+          "voidReason": {
+            "type": "object",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "number",
+          "status",
+          "customerId",
+          "currency",
+          "issuedOn",
+          "dueOn",
+          "subtotalMinor",
+          "taxMinor",
+          "totalMinor",
+          "paidMinor",
+          "balanceMinor",
+          "overdue",
+          "notes",
+          "lines",
+          "dunning",
+          "voidedAt",
+          "voidReason",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "InvoicePage": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceResponse"
+            }
+          },
+          "nextCursor": {
+            "type": "object",
+            "nullable": true,
+            "description": "Pass as ?cursor= for the next page; null on the last page"
+          }
+        },
+        "required": [
+          "items",
+          "nextCursor"
+        ]
+      },
+      "IssueInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "issuedOn": {
+            "type": "string",
+            "example": "2026-09-01",
+            "description": "Defaults to today; the due date follows from the payment terms"
+          }
+        }
+      },
+      "VoidInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "example": "Issued to the wrong customer"
+          }
+        }
+      },
+      "RecordPaymentDto": {
+        "type": "object",
+        "properties": {
+          "amountMinor": {
+            "type": "number",
+            "example": 12500,
+            "description": "Minor units; at most the open balance"
+          },
+          "receivedOn": {
+            "type": "string",
+            "example": "2026-09-15"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "bank_transfer",
+              "card",
+              "cash",
+              "other"
+            ]
+          },
+          "reference": {
+            "type": "string",
+            "example": "Bank ref 8812"
+          }
+        },
+        "required": [
+          "amountMinor",
+          "receivedOn",
+          "method"
+        ]
+      },
+      "PaymentResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "invoiceId": {
+            "type": "string"
+          },
+          "amountMinor": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "receivedOn": {
+            "type": "string"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "bank_transfer",
+              "card",
+              "cash",
+              "other"
+            ]
+          },
+          "reference": {
+            "type": "object",
+            "nullable": true
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "bank_import"
+            ]
+          },
+          "bankImportLineId": {
+            "type": "object",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "invoiceStatus": {
+            "type": "string",
+            "description": "The invoice after this payment"
+          },
+          "invoiceBalanceMinor": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "invoiceId",
+          "amountMinor",
+          "currency",
+          "receivedOn",
+          "method",
+          "reference",
+          "source",
+          "bankImportLineId",
+          "createdAt",
+          "invoiceStatus",
+          "invoiceBalanceMinor"
+        ]
+      },
+      "BankLineDto": {
+        "type": "object",
+        "properties": {
+          "bookedOn": {
+            "type": "string",
+            "example": "2026-09-14"
+          },
+          "amountMinor": {
+            "type": "number",
+            "example": 43200,
+            "description": "Minor units; credits are positive, debits negative"
+          },
+          "currency": {
+            "type": "string",
+            "example": "CHF"
+          },
+          "counterparty": {
+            "type": "string",
+            "example": "MUSTER GMBH"
+          },
+          "reference": {
+            "type": "string",
+            "example": "Payment INV-2026-0001"
+          }
+        },
+        "required": [
+          "bookedOn",
+          "amountMinor",
+          "currency"
+        ]
+      },
+      "CreateBankImportDto": {
+        "type": "object",
+        "properties": {
+          "sourceName": {
+            "type": "string",
+            "example": "camt.053 2026-09-15"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BankLineDto"
+            }
+          }
+        },
+        "required": [
+          "lines"
+        ]
+      },
+      "BankImportLineResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "position": {
+            "type": "number"
+          },
+          "bookedOn": {
+            "type": "string"
+          },
+          "amountMinor": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "counterparty": {
+            "type": "object",
+            "nullable": true
+          },
+          "reference": {
+            "type": "object",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "matched",
+              "unmatched"
+            ]
+          },
+          "invoiceId": {
+            "type": "object",
+            "nullable": true
+          },
+          "paymentId": {
+            "type": "object",
+            "nullable": true
+          },
+          "reason": {
+            "type": "object",
+            "nullable": true,
+            "description": "How it matched, or why it did not"
+          }
+        },
+        "required": [
+          "id",
+          "position",
+          "bookedOn",
+          "amountMinor",
+          "currency",
+          "counterparty",
+          "reference",
+          "status",
+          "invoiceId",
+          "paymentId",
+          "reason"
+        ]
+      },
+      "BankImportResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "processing",
+              "completed",
+              "failed"
+            ]
+          },
+          "sourceName": {
+            "type": "object",
+            "nullable": true
+          },
+          "lineCount": {
+            "type": "number"
+          },
+          "matchedCount": {
+            "type": "number"
+          },
+          "unmatchedCount": {
+            "type": "number"
+          },
+          "error": {
+            "type": "object",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "completedAt": {
+            "type": "object",
+            "nullable": true
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BankImportLineResponse"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "sourceName",
+          "lineCount",
+          "matchedCount",
+          "unmatchedCount",
+          "error",
+          "createdAt",
+          "completedAt",
+          "lines"
+        ]
+      },
+      "RunDunningDto": {
+        "type": "object",
+        "properties": {
+          "asOf": {
+            "type": "string",
+            "example": "2026-10-15",
+            "description": "Evaluate overdue-ness as of this date; defaults to today"
+          }
+        }
+      },
+      "EscalatedInvoiceResponse": {
+        "type": "object",
+        "properties": {
+          "invoiceId": {
+            "type": "string"
+          },
+          "number": {
+            "type": "object",
+            "nullable": true
+          },
+          "level": {
+            "type": "number"
+          },
+          "noticeId": {
+            "type": "string"
+          },
+          "daysOverdue": {
+            "type": "number"
+          },
+          "feeMinor": {
+            "type": "number"
+          },
+          "interestMinor": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "invoiceId",
+          "number",
+          "level",
+          "noticeId",
+          "daysOverdue",
+          "feeMinor",
+          "interestMinor"
+        ]
+      },
+      "DunningRunResponse": {
+        "type": "object",
+        "properties": {
+          "asOf": {
+            "type": "string"
+          },
+          "considered": {
+            "type": "number",
+            "description": "Open invoices past due that were considered"
+          },
+          "escalated": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EscalatedInvoiceResponse"
+            }
+          }
+        },
+        "required": [
+          "asOf",
+          "considered",
+          "escalated"
+        ]
+      },
+      "DunningNoticeResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "invoiceId": {
+            "type": "string"
+          },
+          "level": {
+            "type": "number"
+          },
+          "template": {
+            "type": "string"
+          },
+          "issuedOn": {
+            "type": "string"
+          },
+          "respondBy": {
+            "type": "string"
+          },
+          "daysOverdue": {
+            "type": "number"
+          },
+          "balanceMinor": {
+            "type": "number"
+          },
+          "feeMinor": {
+            "type": "number"
+          },
+          "interestMinor": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "invoiceId",
+          "level",
+          "template",
+          "issuedOn",
+          "respondBy",
+          "daysOverdue",
+          "balanceMinor",
+          "feeMinor",
+          "interestMinor",
+          "createdAt"
+        ]
+      },
+      "OutboxMessageResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "template": {
+            "type": "string"
+          },
+          "subjectId": {
+            "type": "object",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "queued",
+              "sent",
+              "failed"
+            ]
+          },
+          "attempts": {
+            "type": "number"
+          },
+          "lastError": {
+            "type": "object",
+            "nullable": true
+          },
+          "sentAt": {
+            "type": "object",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "to",
+          "subject",
+          "template",
+          "subjectId",
+          "status",
+          "attempts",
+          "lastError",
+          "sentAt",
+          "createdAt"
+        ]
+      },
+      "CreateWebhookEndpointDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "example": "https://erp.example.com/hooks/dunlin"
+          },
+          "events": {
+            "type": "array",
+            "example": [
+              "invoice.paid",
+              "dunning.notice_created"
+            ],
+            "items": {
+              "type": "string",
+              "enum": [
+                "invoice.issued",
+                "invoice.paid",
+                "invoice.voided",
+                "payment.recorded",
+                "dunning.notice_created",
+                "bank_import.completed",
+                "*"
+              ]
+            }
+          }
+        },
+        "required": [
+          "url",
+          "events"
+        ]
+      },
+      "CreatedWebhookEndpointResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "secret": {
+            "type": "string",
+            "description": "HMAC secret for X-Dunlin-Signature. Shown once."
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "events",
+          "active",
+          "createdAt",
+          "secret"
+        ]
+      },
+      "WebhookEndpointResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "url",
+          "events",
+          "active",
+          "createdAt"
+        ]
+      },
+      "WebhookDeliveryResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "endpointId": {
+            "type": "string"
+          },
+          "eventId": {
+            "type": "string"
+          },
+          "eventType": {
+            "type": "string"
+          },
+          "payload": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "delivered",
+              "failed"
+            ]
+          },
+          "attempts": {
+            "type": "number"
+          },
+          "lastStatusCode": {
+            "type": "object",
+            "nullable": true
+          },
+          "lastError": {
+            "type": "object",
+            "nullable": true
+          },
+          "deliveredAt": {
+            "type": "object",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "endpointId",
+          "eventId",
+          "eventType",
+          "payload",
+          "status",
+          "attempts",
+          "lastStatusCode",
+          "lastError",
+          "deliveredAt",
+          "createdAt"
+        ]
+      }
+    }
+  }
+}

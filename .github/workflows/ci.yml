@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, types, unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm format:check
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test:cov
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7
+
+  e2e:
+    name: End-to-end against Postgres and Redis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports: ['5433:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ['6380:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Create the application role and databases
+        # The same script the Postgres container runs on first boot: the app
+        # must not be a superuser, or row-level security would not apply to it.
+        run: psql postgres://postgres:postgres@127.0.0.1:5433/postgres -v ON_ERROR_STOP=1 -f db/init/01-roles.sql
+      - run: pnpm build
+      - run: pnpm test:e2e
+      - name: The committed OpenAPI document is current
+        run: |
+          pnpm openapi:export /tmp/openapi.json
+          diff -u openapi.json /tmp/openapi.json
+        env:
+          DATABASE_URL: postgres://dunlin:dunlin@127.0.0.1:5433/dunlin
+          REDIS_URL: redis://127.0.0.1:6380
+          PLATFORM_TOKEN: ci-only-platform-token-not-used-elsewhere
+          LOG_LEVEL: silent
+
+  image:
+    name: Container image
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: dunlin:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: The image boots and answers its health check
+        run: |
+          docker network create dunlin
+          docker run -d --name pg --network dunlin -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres \
+            -v "$PWD/db/init:/docker-entrypoint-initdb.d:ro" postgres:16-alpine
+          docker run -d --name redis --network dunlin redis:7-alpine
+          for i in $(seq 1 30); do docker exec pg pg_isready -U postgres && break; sleep 1; done
+          docker run -d --name api --network dunlin -p 3000:3000 \
+            -e DATABASE_URL=postgres://dunlin:dunlin@pg:5432/dunlin -e REDIS_URL=redis://redis:6379 \
+            -e PLATFORM_TOKEN=ci-only-platform-token-not-used-elsewhere dunlin:ci
+          for i in $(seq 1 30); do curl -sf http://127.0.0.1:3000/health && exit 0; sleep 1; done
+          docker logs api; exit 1
